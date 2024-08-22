@@ -1,0 +1,48 @@
+body {
+    max-height: 100vh;
+}
+
+main {
+    min-width: 100%;
+    flex-grow: 1;
+    overflow-y: auto;
+    scrollbar-color: #ccc transparent;
+    scrollbar-width: thin;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.625rem;
+    text-align: left;
+}
+
+td {
+    border-top: 0.1rem solid var(--text-color);
+}
+
+th:nth-child(1),
+td:nth-child(1),
+th:nth-child(3),
+td:nth-child(3) {
+    text-align: right;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    width: 90%;
+}
+
+@media (min-width: 600px) {
+    :root {
+        font-size: 1.2rem;
+    }
+
+    main {
+        min-width: 20rem;
+    }
+}

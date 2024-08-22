@@ -1,0 +1,20 @@
+main {
+    max-width: 300px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-gap);
+}
+
+form .inline {
+    display: flex;
+    gap: var(--small-gap);
+}
+
+@media (min-width: 500px) {
+    :root {
+        font-size: 1.2rem;
+    }
+}

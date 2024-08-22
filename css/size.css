@@ -1,0 +1,33 @@
+body {
+    justify-content: space-between;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--normal-gap);
+}
+
+nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--small-gap);
+    max-width: 18.75rem;
+}
+
+.size-btn {
+    width: 5rem;
+    height: 5rem;
+    font-size: 2rem;
+}
+
+.other-btn {
+    grid-column: span 3;
+}
+
+@media (min-width: 400px) and (min-height: 600px) {
+    :root {
+        font-size: 1.2rem;
+    }
+}
