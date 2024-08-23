@@ -62,7 +62,7 @@ main {
 .card-back {
     background-color: var(--accent-color);
     transform: rotateY(180deg);
-    font-size: calc(2rem / var(--size) * 20);
+    font-size: calc(2rem / var(--size) / 1vmin * 20);
     font-weight: bold;
 }
 
@@ -72,6 +72,6 @@ main {
     }
 
     .card-back {
-        font-size: calc(2rem / var(--size) * 10);
+        font-size: calc(2rem / var(--size) / 1vmin * 10);
     }
 }
