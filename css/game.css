@@ -1,3 +1,7 @@
+:root {
+    --size: 8
+}
+
 body {
     align-items: stretch;
     padding: 1% 0;
@@ -13,10 +17,9 @@ main {
 
 #game-board {
     display: grid;
-    grid-template: repeat(4, 1fr)/repeat(4, 1fr);
+    grid-template: repeat(var(--size), 1fr)/repeat(var(--size), 1fr);
     gap: 3%;
     width: 100%;
-    aspect-ratio: 1 / 1;
 }
 
 .card {
@@ -59,7 +62,7 @@ main {
 .card-back {
     background-color: var(--accent-color);
     transform: rotateY(180deg);
-    font-size: 15vmin;
+    font-size: calc(2rem / var(--size) * 20);
     font-weight: bold;
 }
 
@@ -69,6 +72,6 @@ main {
     }
 
     .card-back {
-        font-size: 10vmin;
+        font-size: calc(2rem / var(--size) * 10);
     }
 }
