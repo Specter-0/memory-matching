@@ -71,71 +71,42 @@ const game = {
     }
 }
 
-const gameController = {
-    game: game,
+const UI = {
+    _header: document.getElementById("size"),
+    _style: document.createElement('style'),
+    _board: document.getElementById("game-board"),
 
-    init() {
-        const size = this._getSizeFromURL()
+    _onFlipFn: undefined,
 
-        this.game.init(size,
-            size => this._onReset(size),
-            _ => console.log("Start"),
-            _ => console.log("End"),
-            indexes => this._onUnflip(indexes)
-        )
-    },
-
-    _getSizeFromURL() {
-        return new URLSearchParams(window.location.search)
-            .get("size")
-    },
-
-    _onReset(size) {
-        if (!size || size % 2) this._onInvalidSize(size)
-
+    init(size, cards, onFlip) {
+        this._onFlipFn = onFlip
+        this._initStyle(size)
         this._setDisplaySize(size)
-        this._createStyle(size)
-        this._initResetBtn(size)
 
-        this._clearBoard()
-        this._createBoard(size)
+        this.reset(cards)
     },
 
-    _onInvalidSize(size) {
-        document.getElementById("back").click();
+    reset(cards) {
+        this._clearBoard()
+        this._createBoard(cards)
     },
 
     _setDisplaySize(size) {
-        document
-            .getElementById("size")
-            .innerText = `${size}x${size}`;
+        this._header.innerText = `${size}x${size}`;
     },
 
-    _createStyle(size) {
-        const style = document.createElement('style');
-        document.head.appendChild(style);
-        style.sheet.insertRule(`:root {--size: ${size}}`);
-    },
-
-    _initResetBtn(size) {
-        document
-            .getElementById("reset")
-            .addEventListener("click", _ => this._onReset(size));
+    _initStyle(size) {
+        document.head.appendChild(this._style);
+        this._style.sheet.insertRule(`:root {--size: ${size}}`);
     },
 
     _clearBoard() {
-        document.getElementById("game-board").innerHTML = ""
+        this._board.innerHTML = ""
     },
 
-    _createBoard(size) {
-        const gameBoard = document.getElementById('game-board');
-        const cardCount = size ** 2;
-
-        for (let i = 0; i < cardCount; i++) {
-            const content = game.cards[i]
-            const card = this._createCard(i, content)
-            gameBoard.appendChild(card);
-        }
+    _createBoard(cards) {
+        cards.forEach((v, i) =>
+            this._board.appendChild(this._createCard(i, v)))
     },
 
     _createCard(index, content) {
@@ -157,22 +128,18 @@ const gameController = {
         cardInner.appendChild(cardBack);
         card.appendChild(cardInner);
 
-        card.addEventListener('click', e => this._onFlipCard(e));
+        card.addEventListener('click', e => this._onFlip(e));
         return card
     },
 
-    _onFlipCard(e) {
+    _onFlip(e) {
         const btn = e.target.parentElement.parentElement;
         if (btn.classList.contains('flipped')) return;
         btn.classList.add('flipped');
-        this.game.flip(btn.dataset.cardId);
+        this._onFlipFn(btn.dataset.cardId)
     },
 
-    _onUnflip(indexes) {
-        indexes.forEach(i => this._unflipCard(i))
-    },
-
-    _unflipCard(dataId) {
+    unflipCard(dataId) {
         const selector = `button[data-card-id="${dataId}"]`;
 
         const cards = document.querySelectorAll(selector);
@@ -183,6 +150,57 @@ const gameController = {
             c.disabled = false;
         }), 1000);
     }
+}
+
+const gameController = {
+    _backBtn: document.getElementById("back"),
+    _resetBtn: document.getElementById("reset"),
+
+    _game: game,
+    _ui: UI,
+
+    init() {
+        const size = this._getSizeFromURL()
+        if (!size || size % 2) this._back();
+
+        this._game.init(
+            size,
+            _ => this._onReset(),
+            _ => console.log("Start"),
+            _ => console.log("End"),
+            indexes => this._onUnflip(indexes)
+        )
+
+        this._ui.init(size, this._game.cards, e => this._onFlip(e))
+
+        this._initResetBtn()
+    },
+
+    _getSizeFromURL() {
+        return new URLSearchParams(window.location.search)
+            .get("size")
+    },
+
+    _back() {
+        this._backBtn.click();
+    },
+
+    _onReset() {
+        this._ui.reset(this._game.cards)
+    },
+
+    _onUnflip(indexes) {
+        indexes.forEach(i => this._ui.unflipCard(i))
+    },
+
+    _onFlip(cardId) {
+        this._game.flip(cardId);
+    },
+
+    _initResetBtn() {
+        this._resetBtn
+            .addEventListener("click", _ => this._onReset());
+    },
 }
 
 gameController.init()
