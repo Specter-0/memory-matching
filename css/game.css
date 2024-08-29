@@ -30,6 +30,10 @@ main {
     border: none;
 }
 
+.card.flipped {
+    cursor: auto;
+}
+
 .card-inner {
     position: relative;
     width: 100%;
