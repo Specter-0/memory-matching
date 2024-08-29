@@ -20,6 +20,21 @@
         <a href="size.html" class="footer-btn" id="back">&#10005;</a>
         <button type="button" class="footer-btn" id="reset">&#x27F2;</button>
     </footer>
+    <dialog id="end">
+        <section>
+            <h2>Сохранить результат?</h2>
+            <p class="info">Вы набрали <span id="points">0</span> очков</p>
+            <form method="dialog" id="save">
+                <label for="nick">Введите ник</label>
+                <input class="input-field" type="text" name="nick" id="nick" placeholder="nick">
+                <div class="inline">
+                    <button id="yes" class="btn" type="submit">Да</button>
+                    <button id="no" class="btn" type="submit">Нет</button>
+                </div>
+            </form>
+        </section>
+    </dialog>
+
 </body>
 
 <script src="js/game.js"></script>
