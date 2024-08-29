@@ -3,6 +3,7 @@ const game = {
     _found: [],
     _flipped: [],
     _isStart: false,
+    _attempts: 0,
 
     _onReset: undefined,
     _onStart: undefined,
@@ -11,6 +12,10 @@ const game = {
 
     get cards() {
         return this._cards
+    },
+
+    get attempts() {
+        return this._attempts
     },
 
     init(size, on_reset, on_start, on_end, on_unflip) {
@@ -28,6 +33,7 @@ const game = {
     },
 
     reset(size) {
+        this._attempts = 0
         this._cards = this._createCards(size)
         this._flipped = []
         if (this._onReset) this._onReset(size)
@@ -45,6 +51,8 @@ const game = {
             if (this._onUnflip) this._onUnflip(this._flipped)
             return
         }
+
+        this._attempts++;
 
         if (!this._isStart) {
             this._isStart = true
@@ -68,6 +76,82 @@ const game = {
             this._isStart = false
             if (this._onEnd) this._onEnd()
         }
+    }
+}
+
+const stopwatch = {
+    /**
+     * @type {number}
+     * @private
+     */
+    _startTime: 0,
+
+    /**
+     * @type {number | null}
+     * @private
+     */
+    _timerId: null,
+
+    /**
+     * @type {number}
+     * @private
+     */
+    _elapsed: 0,
+
+    /**
+     * @type {Function | null}
+     * @private
+     */
+    _onUpdate: null,
+
+    /**
+     * Get current elapsed time in milliseconds.
+     * @returns {number}
+     */
+    get current() {
+        if (this._timerId === null)
+            return this._elapsed
+        return Date.now() - this._startTime
+    },
+
+    /**
+     * Set callback function to be executed on each update.
+     * @param {Function} fn - Callback function.
+     */
+    set onUpdate(fn) {
+        this._onUpdate = fn
+    },
+
+    /**
+     * Call `_onUpdate` callback with current elapsed time.
+     * @private
+     */
+    _update() {
+        if (this._onUpdate === null) return;
+        this._onUpdate(this.current);
+    },
+
+    /** Start stopwatch, if it's not already running. */
+    start() {
+        if (this._timerId !== null) return;
+        this._startTime = Date.now() - this._elapsed;
+        this._timerId = setInterval(_ => this._update(), 1000);
+    },
+
+    /** Stop stopwatch and record elapsed time. */
+    stop() {
+        if (this._timerId === null) return
+        this._elapsed = Date.now() - this._startTime
+        clearInterval(this._timerId)
+        this._timerId = null
+    },
+
+    /** Stop stopwatch and reset elapsed time to zero. */
+    reset() {
+        this.stop()
+        this._elapsed = 0
+        if (this._onUpdate === null) return
+        this._onUpdate(0)
     }
 }
 
@@ -152,26 +236,86 @@ const UI = {
     }
 }
 
+const saveDialog = {
+    dialog: document.getElementById("end"),
+    form: document.forms.save,
+    points: document.getElementById("points"),
+
+    onYes: undefined,
+
+    init(onYes) {
+        this.onYes = onYes
+        this.form.addEventListener("submit", e => this._onSubmit(e))
+    },
+
+    /** @param {SubmitEvent} e  */
+    _onSubmit(e) {
+        const id = e.submitter.id
+        if (id === "no") return
+        this.onYes(e.target.nick.value)
+    },
+
+    onNo() {
+        this.dialog.close()
+    },
+
+    show(points) {
+        this.points.innerText = points
+        this.dialog.showModal()
+    }
+}
+
+/** Leaderboard storage */
+const storage = {
+    _nextId: 0,
+
+    init() {
+        this._nextId =
+            localStorage.getItem("next") ?? 0
+    },
+
+    save(name, points) {
+        console.log(name, points);
+
+        const v = JSON.stringify({
+            name: name,
+            points: points
+        })
+        localStorage.setItem(this._nextId++, v)
+        localStorage.setItem("next", this._nextId)
+    }
+}
+
 const gameController = {
     _backBtn: document.getElementById("back"),
     _resetBtn: document.getElementById("reset"),
 
     _game: game,
     _ui: UI,
+    _stopwatch: stopwatch,
+    _dialog: saveDialog,
+    _storage: storage,
+
+    _size: 0,
 
     init() {
         const size = this._getSizeFromURL()
         if (!size || size % 2) this._back();
+        this._size = size
 
         this._game.init(
             size,
             _ => this._onReset(),
-            _ => console.log("Start"),
-            _ => console.log("End"),
+            _ => this._onStart(),
+            _ => this._onEnd(),
             indexes => this._onUnflip(indexes)
         )
 
         this._ui.init(size, this._game.cards, e => this._onFlip(e))
+
+        this._dialog.init(nick => this._onSave(nick))
+
+        this._storage.init()
 
         this._initResetBtn()
     },
@@ -186,7 +330,25 @@ const gameController = {
     },
 
     _onReset() {
+        this._stopwatch.reset()
         this._ui.reset(this._game.cards)
+    },
+
+    _onStart() {
+        this._stopwatch.start()
+    },
+
+    _onEnd() {
+        this._stopwatch.stop()
+        this._dialog.show(this._calcPoints().toFixed())
+    },
+
+    _calcPoints() {
+        const cardCount = this._size ** 2;
+        const attempts = this._game.attempts;
+        const seconds = this._stopwatch.current / 1000;
+        const k = 1000;
+        return cardCount / (attempts + seconds) * k;
     },
 
     _onUnflip(indexes) {
@@ -195,6 +357,10 @@ const gameController = {
 
     _onFlip(cardId) {
         this._game.flip(cardId);
+    },
+
+    _onSave(nick) {
+        this._storage.save(nick, this._calcPoints())
     },
 
     _initResetBtn() {
