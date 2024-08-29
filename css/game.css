@@ -70,6 +70,43 @@ main {
     font-weight: bold;
 }
 
+dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100vw;
+    min-height: 100vh;
+    border: none;
+    background-color: transparent;
+}
+
+dialog section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-gap);
+}
+
+section h2 {
+    text-align: center;
+}
+
+#save {
+    display: flex;
+    gap: var(--small-gap);
+    flex-direction: column;
+}
+
+.inline {
+    display: flex;
+    flex-direction: row;
+    gap: var(--small-gap);
+}
+
+::backdrop {
+    background-color: rgba(0, 0, 0, .5);
+}
+
+
 @media (min-aspect-ratio: 10/15) {
     #game-board {
         max-width: 60vmin;
