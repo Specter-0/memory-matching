@@ -79,6 +79,7 @@ const game = {
     }
 }
 
+/** Stopwatch for game time count */
 const stopwatch = {
     /**
      * @type {number}
@@ -87,7 +88,7 @@ const stopwatch = {
     _startTime: 0,
 
     /**
-     * @type {number | null}
+     * @type {number?}
      * @private
      */
     _timerId: null,
@@ -99,7 +100,7 @@ const stopwatch = {
     _elapsed: 0,
 
     /**
-     * @type {Function | null}
+     * @type {((t: number) => void)?}
      * @private
      */
     _onUpdate: null,
@@ -116,7 +117,7 @@ const stopwatch = {
 
     /**
      * Set callback function to be executed on each update.
-     * @param {Function} fn - Callback function.
+     * @param {(t: number) => void} fn - Callback function.
      */
     set onUpdate(fn) {
         this._onUpdate = fn
@@ -269,11 +270,17 @@ const saveDialog = {
 const storage = {
     _nextId: 0,
 
+    /** Initialize storage */
     init() {
         this._nextId =
             localStorage.getItem("next") ?? 0
     },
 
+    /**
+     * Save new record in the leaderboard
+     * @param {string} name player nickname
+     * @param {number} points game points
+     */
     save(name, points) {
         console.log(name, points);
 
