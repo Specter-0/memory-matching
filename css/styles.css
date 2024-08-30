@@ -122,6 +122,22 @@ footer {
     border-color: var(--accent-color);
 }
 
+/* -- DIALOG -------------------------------------------- */
+
+dialog[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100vw;
+    min-height: 100vh;
+    border: none;
+    background-color: transparent;
+}
+
+::backdrop {
+    background-color: rgba(0, 0, 0, .9);
+}
+
 /* -- INLINE -------------------------------------------- */
 h1 {
     text-align: center;

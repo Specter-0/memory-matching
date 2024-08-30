@@ -70,16 +70,6 @@ main {
     font-weight: bold;
 }
 
-dialog[open] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 100vw;
-    min-height: 100vh;
-    border: none;
-    background-color: transparent;
-}
-
 dialog section {
     display: flex;
     flex-direction: column;
@@ -101,11 +91,6 @@ section h2 {
     flex-direction: row;
     gap: var(--small-gap);
 }
-
-::backdrop {
-    background-color: rgba(0, 0, 0, .9);
-}
-
 
 @media (min-aspect-ratio: 10/15) {
     #game-board {
