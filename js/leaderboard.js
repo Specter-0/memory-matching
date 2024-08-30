@@ -13,6 +13,11 @@ Object.freeze(lbCfg);
 
 /** leaderboard storage */
 const storage = {
+    /**
+     * Extract leaderboard records from local storage
+     * @returns {Array} leaderboard records
+     * @private
+     */
     _extract() {
         i = 0
         const leaderboard = []
@@ -24,6 +29,10 @@ const storage = {
         }
     },
 
+    /**
+     * Sorted leaderboard records
+     * @type {Array}
+     */
     get leaderboard() {
         const leaderboard = this._extract()
         leaderboard.sort((a, b) => {
@@ -37,12 +46,38 @@ const storage = {
 
 /** Leaderboard builder */
 const leaderboard = {
+    /**
+     * Main leaderboard panel
+     * @type {HTMLElement}
+     * @private
+     */
     _mainPanel: document.getElementById(lbCfg.mainPanelElId),
+    /**
+     * Show this if leaderboard is empty
+     * @type {HTMLElement}
+     * @private
+     */
     _emptyPanel: document.getElementById(lbCfg.emptyPanelElId),
 
+    /**
+     * Leaderboard storage
+     * @private
+     */
     _storage: storage,
+    /**
+     * Leaderboard element
+     * @type {HTMLElement}
+     * @private
+     */
     _leaderboard: document.getElementById(lbCfg.leaderboardElId),
 
+    /**
+     * Build table row from leaderboard record
+     * @param {number} place record place in leaderboard
+     * @param {string} nick player nickname
+     * @param {number} points game points
+     * @returns {HTMLTableRowElement}
+     */
     _row(place, nick, points) {
         const row = document.createElement("tr")
 
@@ -54,11 +89,13 @@ const leaderboard = {
         return row
     },
 
+    /** Swap elements if no leaderboard records */
     _onEmpty() {
         this._mainPanel.classList.add(lbCfg.hideClass)
         this._emptyPanel.classList.remove(lbCfg.hideClass)
     },
 
+    /** Initialize leaderboard */
     init() {
         const lb = storage.leaderboard
         if (lb.length === 0) this._onEmpty()
