@@ -13,6 +13,16 @@ form .inline {
     gap: var(--small-gap);
 }
 
+section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-gap);
+}
+
+section h2 {
+    text-align: center;
+}
+
 @media (min-width: 500px) {
     :root {
         font-size: 1.2rem;

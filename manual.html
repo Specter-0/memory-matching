@@ -14,8 +14,9 @@
         <h1>Играть</h1>
     </header>
     <main>
-        <form action="game.html">
+        <form action="game.html" id="manual">
             <label for="size">Размер игрового поля</label>
+            <label for="size">Чётное число</label>
             <div class="inline">
                 <input class="input-field" type="number" name="size" id="size" min="4" autocomplete="off" required>
                 <button class="btn" type="submit">Ок</button>
@@ -25,6 +26,16 @@
     <footer>
         <a href="size.html" class="footer-btn">&#10005;</a>
     </footer>
+    <dialog id="error">
+        <section>
+            <h2>Ошибка</h2>
+            <p>Число должно быть чётным!</p>
+            <form method="dialog">
+                <button class="btn" type="submit">Ок</button>
+            </form>
+        </section>
+    </dialog>
+    <script src="js/manual.js"></script>
 </body>
 
 </html>
